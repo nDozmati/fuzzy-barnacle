@@ -26,6 +26,6 @@ run: all
 
 # Clean generated files
 clean:
-	rm -f scanner cmos lex.yy.c tokens.txt PlagarismReport.txt
+	rm -f scanner cmos lex.yy.c tokens.txt PlagarismReport.txt scanner_out.txt
 
 .PHONY: all clean run
