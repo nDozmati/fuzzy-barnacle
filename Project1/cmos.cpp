@@ -1,6 +1,6 @@
 /**
  * @file cmos.cpp
- * @author Matthew and Nicholas 
+ * @author Matthew and Nicolas 
  * @brief 
  * @date 2026-03-16
  * 
@@ -32,7 +32,7 @@ string read(const string &file ){
 
 vector<string> addkmers(const string &tokens, int k){
     vector<string> kmers;
-    for(int i = 0; i <= tokens.length(); i++){
+    for(size_t i = 0; i <= tokens.length(); i++){
         kmers.emplace_back(tokens.substr(i,k));
     }
     return kmers;
@@ -41,11 +41,11 @@ vector<string> addkmers(const string &tokens, int k){
 
 int hashkmer(const string &kmer){
     int hashing = 0;
-    for(int i = 0; i < kmer.length(); ++i){
+    for(size_t i = 0; i < kmer.length(); ++i){
         char a = kmer[i];
         hashing = hashing * 10 + (a - '0');
     }
-
+    return hashing;
 }
 
 
@@ -53,16 +53,16 @@ int hashkmer(const string &kmer){
 
 vector<int> allkmers(const vector<string> &allkmers){
     vector<int> hashes;
-    for(int i = 0; i < allkmers.size(); i++){
+    for(size_t i = 0; i < allkmers.size(); i++){
         hashes.push_back(hashkmer(allkmers[i]));
     }
-
+    return hashes;
 }
 
 
 vector<int> fingerprints(const vector<int> &hashes, int w){
     vector<int> fingerprints;
-    for(int i = 0; i < hashes.size(); ++i){
+    for(size_t i = 0; i < hashes.size(); ++i){
         int smallest = hashes[i];
         for (int j = 0; j < w; j++){
             if(hashes[i+j] < smallest){
@@ -87,7 +87,7 @@ vector<string> kmers =  addkmers(tokens, k);
 vector<int> hashes = allkmers(kmers);
 vector<int> print = fingerprints(hashes, w);
 
-for(int i = 0; i < print.size(); ++i){
+for(size_t i = 0; i < print.size(); ++i){
     cout << print[i] << endl;
 }
 
