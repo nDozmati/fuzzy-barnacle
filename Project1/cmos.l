@@ -4,12 +4,7 @@
     #include <cstdio>
 
     using namespace std;
-
-   #define TKKEYWORD   001
-   #define TKID        002
-   #define TKNUMBER    003
-   #define TKOP        004
-   #define TKDEL       005
+    FILE  *ofile;
     %}
 // definitions 
 WS [ \t\n]+  
@@ -19,29 +14,30 @@ NUM [0-9]+
 %%
 // Remove Whitespace
 {WS} { }
-// keywords 
-"int" {return TKKEYWORD;}
-"if"  {return TKKEYWORD;}
-"while" {return TKKEYWORD;}
-"else"  {return TKKEYWORD;}
-"return" {return TKKEYWORD;}
+// keywords
+"int"|"if"|"while"|"else"|"return" {fprintf(ofile, "001 ");}
 //Identifiers 
-{ID} {return TKID;}
+{ID} {fprintf(ofile, "002 ");}
 // number values
-{NUM} {return TKNUMBER;}
+{NUM} {fprintf(ofile, "003 ");}
 // operators 
-"+"       {return TKOP}
-"-"       {return TKOP}
-"="       {return TKOP}
+"+"|"-"|"="|"=="|">="|"<="|"!="      {fprintf(ofile, "004 ");}
 // delimiters 
-";"       {return TKDEL;}
-"|"       {return TKDEL;}
+";"|"("|")"|"{"|"}"|","   {fprintf(ofile, "005")}
 
+//Comments 
+"//".*            { }
+"/*"([^*]|\*+[^*/])*\*+"/"   { }
+
+
+// everything else
 .         { }
 
 %%
 
 int main(){
-    yylex();
-    return
+   ofile = fopen("tokens.txt", "w");
+   yylex();
+   fclose(ofile);
+    return 0;
 }
