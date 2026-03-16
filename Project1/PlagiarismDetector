@@ -14,6 +14,6 @@ do
 	cat scanner_out.txt >> tokens.txt
 	echo "">>tokens.txt
 done
-echo "Detecting Plagarism, this may take a few minutes."
-./cmos > PlagarismReport.txt
-echo "Done. Results stored in PlagarismReport.txt"
+echo "Detecting Plagiarism, this may take a few minutes."
+./cmos > PlagiarismReport.txt
+echo "Done. Results stored in PlagiarismReport.txt"
