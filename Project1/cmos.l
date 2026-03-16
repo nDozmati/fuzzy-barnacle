@@ -1,3 +1,11 @@
+/**
+ * @file cmos.l
+ * @author Matthew and Nicolas 
+ * @brief 
+ * @date 2026-03-16
+ * 
+ */
+
 %{
 #include <stdio.h>
 #include <stdlib.h>

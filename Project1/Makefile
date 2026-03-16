@@ -1,3 +1,8 @@
+# @file Makefile
+# @author Matthew and Nicolas 
+# @brief builds & runs the Plagairism Detector project
+# @date 2026-03-16
+
 # Compiler settings
 CXX = g++
 CC  = gcc
