@@ -20,58 +20,51 @@ int prev_token = -1;
 
 /* DEFINED TOKENS */
 
-/* data types */
-#define TK_void 100
-#define TK_int 101
-#define TK_double 102
-#define TK_float 103
-#define TK_char 104
-#define TK_const 105
-#define TK_static 106
-
-int is_type_token(int t) {
-    return (t==TK_void || t==TK_int || t==TK_double || t==TK_float ||
-            t==TK_char || t==TK_const || t==TK_static);
-}
-
-/* keywords */
-#define TK_if 200
-#define TK_else 201
-#define TK_switch 202
-#define TK_case 203
-#define TK_break 204
-#define TK_do 205
-#define TK_while 206
-#define TK_for 207
-#define TK_return 208
-#define TK_continue 209
-
-int is_keyword_token(int t) {
-    return (t==TK_if || t==TK_else || t==TK_switch || t==TK_case ||
-            t==TK_break || t==TK_do || t==TK_while || t==TK_for || 
-            t==TK_return || t==TK_continue);
-}
-
 /* data structures */
-#define TK_struct 300
-#define TK_class 301
-#define TK_public 302
-#define TK_private 303
-#define TK_protected 304
-#define TK_vector 305
-#define TK_array 306
+#define TK_struct 100
+#define TK_class 101
+#define TK_public 102
+#define TK_private 103
+#define TK_protected 104
+#define TK_vector 105
+#define TK_array 106
 
 int is_structure_token(int t) {
     return (t==TK_struct || t==TK_class || t==TK_public || t==TK_private ||
             t==TK_protected || t==TK_vector || t==TK_array);
 }
 
-/* identifiers */
-#define TK_identifier 900
-#define TK_number 901
+/* data types */
+#define TK_void 200
+#define TK_int 201
+#define TK_double 202
+#define TK_float 203
+#define TK_char 204
+#define TK_const 205
+#define TK_static 206
+#define TK_auto 207
 
-int is_identifier_token(int t) {
-    return (t==TK_identifier || t==TK_number);
+int is_type_token(int t) {
+    return (t==TK_void || t==TK_int || t==TK_double || t==TK_float ||
+            t==TK_char || t==TK_const || t==TK_static || t==TK_auto);
+}
+
+/* keywords */
+#define TK_if 300
+#define TK_else 301
+#define TK_switch 302
+#define TK_case 303
+#define TK_break 304
+#define TK_do 305
+#define TK_while 306
+#define TK_for 307
+#define TK_return 308
+#define TK_continue 309
+
+int is_keyword_token(int t) {
+    return (t==TK_if || t==TK_else || t==TK_switch || t==TK_case ||
+            t==TK_break || t==TK_do || t==TK_while || t==TK_for || 
+            t==TK_return || t==TK_continue);
 }
 
 /* operators */
@@ -132,6 +125,14 @@ int is_delimiter_token(int t) {
             t==TK_backslash || t==TK_singlequote || t==TK_doublequote);
 }
 
+/* identifiers */
+#define TK_identifier 900
+#define TK_number 901
+
+int is_identifier_token(int t) {
+    return (t==TK_identifier || t==TK_number);
+}
+
 %}
 
 
@@ -141,6 +142,14 @@ int is_delimiter_token(int t) {
 "//".*                      ;   /* ignore single line comment */
 "/*"([^*]|\*+[^*/])*\*+"/"  ;   /* ignore multi-line comment */
 
+"struct"                    { EMIT(TK_struct); }
+"class"                     { EMIT(TK_class); }
+"public"                    { EMIT(TK_public); }
+"private"                   { EMIT(TK_private); }
+"protected"                 { EMIT(TK_protected); }
+"Vector"                    { EMIT(TK_vector); }
+"array"                     { EMIT(TK_array); }
+
 "void"                      { EMIT(TK_void); }
 "int"                       { EMIT(TK_int); }
 "double"                    { EMIT(TK_double); }
@@ -148,6 +157,7 @@ int is_delimiter_token(int t) {
 "char"                      { EMIT(TK_char); }
 "const"                     { EMIT(TK_const); }
 "static"                    { EMIT(TK_static); }
+"auto"                      { EMIT(TK_auto); }
 
 "if"                        { EMIT(TK_if); }
 "else"                      { EMIT(TK_else); }
@@ -159,14 +169,6 @@ int is_delimiter_token(int t) {
 "for"                       { EMIT(TK_for); }
 "return"                    { EMIT(TK_return); }
 "continue"                  { EMIT(TK_continue); }
-
-"struct"                    { EMIT(TK_struct); }
-"class"                     { EMIT(TK_class); }
-"public"                    { EMIT(TK_public); }
-"private"                   { EMIT(TK_private); }
-"protected"                 { EMIT(TK_protected); }
-"Vector"                    { EMIT(TK_vector); }
-"array"                     { EMIT(TK_array); }
 
 "=="                        { EMIT(TK_equalequal); }
 "!="                        { EMIT(TK_notequal); }
