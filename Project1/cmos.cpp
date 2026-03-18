@@ -82,7 +82,7 @@ vector<int> allkmers(const vector<string> &allkmers){
 // produces a reduced set of representative fingerprints
 vector<int> fingerprints(const vector<int> &hashes, int w){
     vector<int> fingerprints;
-    for(size_t i = 0; i < hashes.size() - w; ++i){
+    for(size_t i = 0; i <= hashes.size() - w; ++i){
         int smallest = hashes[i];
         for (int j = 0; j < w; j++){
             if(hashes[i+j] < smallest){
@@ -94,7 +94,7 @@ vector<int> fingerprints(const vector<int> &hashes, int w){
     return fingerprints;
 }
 
-/* SIMILARITY SCORING (Jaccard-style) */
+/* SIMILARITY SCORING (Jaccard) */
 // Computes similarity using intersection / union
 // intersection = shared fingerprints
 // union = total unique elements approximation
@@ -160,14 +160,57 @@ int main() {
         }
     }
 
-    // sort by similarity score (1 to 0)
-    sort(results.begin(), results.end(),
-        [](const Result &a, const Result &b) {
-            return a.score > b.score;
-        });
-
     // plagiarism report output
     cout << "C-Program Similarity Ranking\n\n";
+    
+    // rank files by plagiarism likelyhood
+    vector<pair<string, double>> suspicion;
+    // for each program i and j, find the maximum similarity
+    for (size_t i = 0; i < programs.size(); ++i) {
+        double maxScore = 0.0;
+        for (size_t j = 0; j < results.size(); ++j) {
+            // check if this file is involved in the pair
+            if (results[j].a == programs[i].name ||
+                results[j].b == programs[i].name) {
+                if (results[j].score > maxScore) {
+                    maxScore = results[j].score;
+                }
+            }
+        }
+        suspicion.push_back({programs[i].name, maxScore});
+    }
+
+    // sort by suspicion value
+    sort(suspicion.begin(), suspicion.end(),
+        [](const pair<string,double> &a, const pair<string,double> &b) {
+            if (a.second == b.second) {
+                return a.first < b.first; // tie-break by filename
+            }
+            return a.second > b.second;
+        });
+
+    // plagiarism suspicion rankings
+    cout << "\nMost Suspicious Files (Ranked)\n";
+    cout << "Rank |    File    | Max Similarity\n";
+    cout << "-----|------------|---------------\n";
+    for (size_t i = 0; i < suspicion.size(); ++i) {
+        cout << i+1 << "\t  "
+            << suspicion[i].first << "   "
+            << fixed << setprecision(2)
+            << suspicion[i].second*100 << "%\n";
+    }
+
+    // sort pairings by similarity score (1 to 0)
+    sort(results.begin(), results.end(),
+        [](const Result &a, const Result &b) {
+            if (a.score == b.score){
+                return a.score < b.score;
+            }
+            return a.score > b.score;
+        });
+    
+    // derived similarity pairings
+    cout << "\nSimilarity Pairings (ordered)\n";
     cout << "Match %|  File A  |  File B  \n";
     cout << "-------|----------|----------\n";
     // print sorted results with percentage formatting
