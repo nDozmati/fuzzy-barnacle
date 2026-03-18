@@ -1,7 +1,7 @@
 /**
  * @file cmos.cpp
- * @author Matthew and Nicolas 
- * @brief 
+ * @author Matthew Carpenter and Nicolas Dozmati
+ * @brief main application that performs similarity calculations from lexical analysis
  * @date 2026-03-16
  * 
  */
@@ -12,6 +12,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
@@ -74,7 +75,7 @@ vector<int> allkmers(const vector<string> &allkmers){
 
 vector<int> fingerprints(const vector<int> &hashes, int w){
     vector<int> fingerprints;
-    for(size_t i = 0; i < hashes.size(); ++i){
+    for(size_t i = 0; i < hashes.size() - w; ++i){
         int smallest = hashes[i];
         for (int j = 0; j < w; j++){
             if(hashes[i+j] < smallest){
@@ -91,15 +92,16 @@ vector<int> fingerprints(const vector<int> &hashes, int w){
 
 double similarity(const vector<int> &A, const vector<int> &B) {
     int shared = 0;
-    for(int a : A) {
-        for(int b : B) {
-            if(a == b) {
+    for(size_t a = 0; a < A.size(); ++a) {
+        for(size_t b = 0; b < B.size(); ++b) {
+            if(A[a] == B[b]) {
                 shared++;
                 break;
             }
         }
     }
-    return (double)shared / (A.size() + B.size());
+    int total = A.size() + B.size() - shared;
+    return (double)shared / total;
 }
 
 /* ---------- MAIN ---------- */
@@ -147,18 +149,21 @@ int main() {
 
     /* ---------- Sort by highest similarity ---------- */
 
-    sort(results.begin(), results.end(), [](const Result &a, const Result &b) {
+    sort(results.begin(), results.end(),
+        [](const Result &a, const Result &b) {
             return a.score > b.score;
         });
 
     /* ---------- Output report ---------- */
 
-    cout << "Similarity Ranking\n\n";
+    cout << "C-Program Similarity Ranking\n\n";
+    cout << "Match %\tFile A\t\tFile B\n";
 
-    for(const auto &r : results) {
-        cout << r.score << " "
-             << r.a << " "
-             << r.b << endl;
+    for (size_t i = 0; i < results.size(); ++i) {
+        cout << fixed << setprecision(2)
+            << (results[i].score)*100 << "%\t"
+            << results[i].a << "\t"
+            << results[i].b << endl;
     }
 
     return 0;
