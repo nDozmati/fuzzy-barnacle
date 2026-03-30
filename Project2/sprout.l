@@ -2,7 +2,7 @@
  * @file sprout.l
  * @author Matthew Carpenter and Nicolas Dozmati
  * @brief lexical analyzer for a custom TreeBuilder language
- * @date 2026-03-25
+ * @date 2026-03-30
  * 
  */
 
@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-FILE *out;              /* global output file pointer */
+extern FILE *out;       /* global output file pointer */
 int prev_token = -1;    /* track previous token */
 
 /* HELPER MACROS */
@@ -18,119 +18,126 @@ int prev_token = -1;    /* track previous token */
 /* Print a matched TK_id to outfile */
 #define EMIT(token) do { fprintf(out, "%d ", token); prev_token = token; } while(0)
 
+
 /* DEFINED TOKENS */
 
 /* tree structures */
-#define TK_buildnode 101
-#define TK_name 102
-#define TK_weight 103
-#define TK_isachildof 104
+#define TK_buildnode 301
+#define TK_name 302
+#define TK_weight 303
+#define TK_isachildof 304
 
-/* keywords */
-#define TK_print 201
-#define TK_for 202
-#define TK_in 203
+/* tree keywords */
+#define TK_print 401
+#define TK_for 402
+#define TK_in 403
 
-/* operators */
-#define TK_equalequal 301
-#define TK_notequal 302
-#define TK_greaterequal 303
-#define TK_lesserequal 304
-#define TK_plusequal 305
-#define TK_minusequal 306
-#define TK_starequal 307
-#define TK_slashequal 308
-#define TK_equal 309
-#define TK_greaterthan 310
-#define TK_lesserthan 311
-#define TK_plusplus 312
-#define TK_plus 313
-#define TK_minusminus 314
-#define TK_minus 315
-#define TK_star 316
-#define TK_slash 317
+/* multi-char operators */
+#define TK_equalequal 501
+#define TK_notequal 502
+#define TK_greaterequal 503
+#define TK_lesserequal 504
+#define TK_plusequal 505
+#define TK_minusequal 506
+#define TK_starequal 507
+#define TK_slashequal 508
+#define TK_plusplus 509
+#define TK_minusminus 510
 
-/* delimiters */
-#define TK_opencurly 401
-#define TK_closecurly 402
-#define TK_openbrack 403
-#define TK_closebrack 404
-#define TK_openparen 405
-#define TK_closeparen 406
-#define TK_quotation 407
-#define TK_semicolon 408
-#define TK_colon 409
+/* single-char operators (ascii token < 256) */
+#define TK_equal '='
+#define TK_greaterthan '>'
+#define TK_lesserthan '<'
+#define TK_plus '+'
+#define TK_minus '-'
+#define TK_star '*'
+#define TK_slash '/'
+#define TK_backslash '\\'
+#define TK_percent '%'
+#define TK_caret '^'
+
+/* delimiters (ascii token < 256) */
+#define TK_opencurly '{'
+#define TK_closecurly '}'
+#define TK_openbrack '['
+#define TK_closebrack ']'
+#define TK_openparen '('
+#define TK_closeparen ')'
+#define TK_quotation '\"'
+#define TK_apostrophe '\''
+#define TK_semicolon ';'
+#define TK_colon ':'
 
 /* identifiers */
 #define TK_variable 901
 #define TK_integer 902
+#define TK_string 903
+#define TK_eof 999
 
 
 %}
 
+/* REGULAR EXPRESSIONS */
+ID          [a-zA-Z_][_a-zA-Z0-9]*
+INT         [0-9]+
+STRING      \"([^\"\\]|\\.)*\"
+WHITESPACE  [ \t\n]+
+/* EOF */
 
 %%
 
-[ \t\n]+                    ;   /* ignore whitespace, tabs, and new line characters */
-"//".*                      ;   /* ignore single line comment */
-"/*"([^*]|\*+[^*/])*\*+"/"  ;   /* ignore multi-line comment */
+{WHITESPACE}    ;   /* ignore whitespace, tabs, and new line characters */
 
-"buildnode"                 { EMIT(TK_buildnode); }
-"name"                      { EMIT(TK_name); }
-"weight"                    { EMIT(TK_weight); }
-"isachildof"                { EMIT(TK_isachildof); }
+{STRING}        { return(TK_string); }
+{INT}           { return(TK_integer); }      
 
-"print"                     { EMIT(TK_print); }
-"for"                       { EMIT(TK_for); }
-"in"                        { EMIT(TK_in); }
+"buildnode"     { return(TK_buildnode); }
+"name"          { return(TK_name); }
+"weight"        { return(TK_weight); }
+"isachildof"    { return(TK_isachildof); }
 
-"=="                        { EMIT(TK_equalequal); }
-"!="                        { EMIT(TK_notequal); }
-">="                        { EMIT(TK_greaterequal); }
-"<="                        { EMIT(TK_lesserequal); }
-"+="                        { EMIT(TK_plusequal); }
-"-="                        { EMIT(TK_minusequal); }
-"*="                        { EMIT(TK_starequal); }
-"/="                        { EMIT(TK_slashequal); }
-"="                         { EMIT(TK_equal); }
-">"                         { EMIT(TK_greaterthan); }
-"<"                         { EMIT(TK_lesserthan); }
-"++"                        { EMIT(TK_plusplus); }
-"+"                         { EMIT(TK_plus); }
-"--"                        { EMIT(TK_minusminus); }
-"-"                         { EMIT(TK_minus); }
-"*"                         { EMIT(TK_star); }
-"/"                         { EMIT(TK_slash); }
+"print"         { return(TK_print); }
+"for"           { return(TK_for); }
+"in"            { return(TK_in); }
 
-"{"                         { EMIT(TK_opencurly); }
-"}"                         { EMIT(TK_closecurly); }
-"["                         { EMIT(TK_openbrack); }
-"]"                         { EMIT(TK_closebrack); }
-"("                         { EMIT(TK_openparen); }
-")"                         { EMIT(TK_closeparen); }
-"\""                        { EMIT(TK_quotation); }
-";"                         { EMIT(TK_semicolon); }
-":"                         { EMIT(TK_colon); }
+{ID}            { return(TK_variable); }
 
-[a-zA-Z_][_a-zA-Z0-9]*      { EMIT(TK_variable); }
-[0-9]+                      { EMIT(TK_integer); }
+"=="            { return(TK_equalequal); }
+"!="            { return(TK_notequal); }
+">="            { return(TK_greaterequal); }
+"<="            { return(TK_lesserequal); }
+"+="            { return(TK_plusequal); }
+"-="            { return(TK_minusequal); }
+"*="            { return(TK_starequal); }
+"/="            { return(TK_slashequal); }
+"++"            { return(TK_plusplus); }
+"--"            { return(TK_minusminus); }
 
-.                           ;   /* ignore anything not previously matched */
+"="             { return(TK_equal); }
+">"             { return(TK_greaterthan); }
+"<"             { return(TK_lesserthan); }
+"+"             { return(TK_plus); }
+"-"             { return(TK_minus); }
+"*"             { return(TK_star); }
+"/"             { return(TK_slash); }
+"\\"            { return(TK_backslash); }
+"%"             { return(TK_percent); }
+"^"             { return(TK_caret); }
+
+"{"             { return(TK_opencurly); }
+"}"             { return(TK_closecurly); }
+"["             { return(TK_openbrack); }
+"]"             { return(TK_closebrack); }
+"("             { return(TK_openparen); }
+")"             { return(TK_closeparen); }
+"\""            { return(TK_quotation); }
+"'"             { return(TK_apostrophe); }
+";"             { return(TK_semicolon); }
+":"             { return(TK_colon); }
+
+
+.               ;   /* ignore anything not previously matched */
 
 %%
 
-
-int main() {
-    out = fopen("sprout_out.txt", "w"); /* overwrite each time */
-    if (!out) {
-        printf("Error opening output file\n");
-        return 1;
-    }
-
-    extern FILE *yyin;
-    yyin = stdin;       /* read from redirected input */
-
-    yylex();
-    fclose(out);
-    return 0;
-}
+/* main moved to sprout.cc */
