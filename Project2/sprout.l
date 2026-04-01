@@ -78,7 +78,7 @@ int prev_token = -1;    /* track previous token */
 %}
 
 /* REGULAR EXPRESSIONS */
-ID          [a-zA-Z_][_a-zA-Z0-9]*
+VARIABLE    [a-zA-Z_][_a-zA-Z0-9]*
 INT         [0-9]+
 STRING      \"([^\"\\]|\\.)*\"
 WHITESPACE  [ \t\n]+
@@ -103,7 +103,7 @@ WHITESPACE  [ \t\n]+
 "for"           { return(TK_for); }
 "in"            { return(TK_in); }
 
-{ID}            { return(TK_variable); }
+{VARIABLE}      { return(TK_variable); }
 
 "=="            { return(TK_equalequal); }
 "!="            { return(TK_notequal); }
