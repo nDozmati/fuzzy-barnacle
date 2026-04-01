@@ -84,6 +84,9 @@ STRING      \"([^\"\\]|\\.)*\"
 WHITESPACE  [ \t\n]+
 /* EOF */
 
+/* FLEX OPTIONS (line numbers) */
+%option yylineno
+
 %%
 
 {WHITESPACE}    ;   /* ignore whitespace, tabs, and new line characters */

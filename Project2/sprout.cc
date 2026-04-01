@@ -24,14 +24,14 @@ FILE* out;
 int main(int argc, char* argv[]) {
     // Check for input file
     if (argc < 2) {
-        std::cerr << "Usage: ./sprout <inputfile>\n";
+        cerr << "Usage: ./sprout <inputfile>\n";
         return 1;
     }
 
     // Open input file
     FILE* inFile = fopen(argv[1], "r");
     if (!inFile) {
-        std::cerr << "Error: cannot open file " << argv[1] << "\n";
+        cerr << "Error: cannot open file " << argv[1] << "\n";
         return 1;
     }
 
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     // Open output file
     out = fopen("sprout_out.txt", "w");
     if (!out) {
-        std::cerr << "Error: cannot open output file\n";
+        cerr << "Error: cannot open output file\n";
         fclose(inFile);
         return 1;
     }
@@ -62,6 +62,6 @@ int main(int argc, char* argv[]) {
     fclose(inFile);
     fclose(out);
 
-    std::cout << "Lexical analysis complete. Output in sprout_out.txt\n";
+    cout << "Lexical analysis complete. Output in sprout_out.txt\n";
     return 0;
 }
