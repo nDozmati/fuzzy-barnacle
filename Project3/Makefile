@@ -10,26 +10,26 @@ CFLAGS = -Wall
 LEX = flex
 
 # Default target
-all: sprout
+all: TreeBuilder
 
 # Generate lexer
-lex.yy.c: sprout.l
-	$(LEX) sprout.l
+lex.yy.c: tree_builder.l
+	$(LEX) tree_builder.l
 
 # Compile lexer (C)
 lex.yy.o: lex.yy.c
 	$(CC) $(CFLAGS) -c lex.yy.c
 
 # Build final executable (C++ + lexer)
-sprout: sprout.cc lex.yy.o
-	$(CXX) $(CXXFLAGS) sprout.cc lex.yy.o -lfl -o sprout
+TreeBuilder: tree_builder.cc lex.yy.o
+	$(CXX) $(CXXFLAGS) tree_builder.cc lex.yy.o -lfl -o TreeBuilder
 
 # Run on a sample file
 run: all
-	./sprout Examples/ex1.tree
+	./TreeBuilder Examples/ex1.tree
 
 # Clean
 clean:
-	rm -f lex.yy.c lex.yy.o sprout sprout_out.txt
+	rm -f lex.yy.c lex.yy.o TreeBuilder Branch_out.txt
 
 .PHONY: all clean run
