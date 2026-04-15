@@ -1,3 +1,10 @@
+/**
+ * @file tree_node.h
+ * @brief Definition of TreeNode class for TreeBuilder project
+ * @author Nicolas Dozmati & Matthew Carpenter
+ * @date 2026-04-15
+ */
+
 #ifndef TREE_NODE_H
 #define TREE_NODE_H
 

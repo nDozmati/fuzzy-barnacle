@@ -2,21 +2,27 @@
  * @file tree_builder.cc
  * @author Matthew Carpenter and Nicolas Dozmati
  * @brief Driver for TreeBuilder lexical analyzer
- * @date 2026-03-30
+ * @date 2026-04-15
  * 
  */
 
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <map>
+
+#include "parse_tree.h"
 
 using namespace std;
 
 // Flex interface (C linkage)
 extern "C" {
+    int yyparse();
     int yylex();
     extern FILE* yyin;
 }
+
+extern compound_statement *root;
 
 // Shared output file (used by sprout.l)
 FILE* out;
@@ -24,7 +30,7 @@ FILE* out;
 int main(int argc, char* argv[]) {
     // Check for input file
     if (argc < 2) {
-        cerr << "Usage: ./sprout <inputfile>\n";
+        cerr << "Usage: ./TreeBuilder <inputfile>\n";
         return 1;
     }
 
@@ -37,31 +43,18 @@ int main(int argc, char* argv[]) {
 
     yyin = inFile;
 
-    // Open output file
-    out = fopen("sprout_out.txt", "w");
-    if (!out) {
-        cerr << "Error: cannot open output file\n";
-        fclose(inFile);
-        return 1;
-    }
-
-    // Run lexer
-    // yylex();
-
-    // Debugging: print tokens or literal characters using lexer output
-    int token;
-    while ((token = yylex()) != 0) {
-        if (token < 256) {
-            fprintf(out, "'%c' ", (char)token); // literal char
-        } else {
-            fprintf(out, "%d ", token);         // keyword, operator, or identifier
+    // Parse the input file and build the parse tree (root)
+    if (yyparse() == 0) {
+        cout << "Parsing successful.\n";
+        // Evaluate the parse tree to build the actual tree structure
+        map<string,int> sym_tab;
+        if (root) {
+            root->evaluate_statement(sym_tab);
         }
+    } else {
+        cerr << "Parsing failed.\n";
     }
-    fprintf(out, "\n");
 
     fclose(inFile);
-    fclose(out);
-
-    cout << "Lexical analysis complete. Output in sprout_out.txt\n";
     return 0;
 }

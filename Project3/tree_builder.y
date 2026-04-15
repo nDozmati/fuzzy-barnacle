@@ -6,10 +6,9 @@
 extern int yylex();
 void yyerror(const char *s);
 
-statement *root;
+compound_statement *root;
 %}
 
-/* YYSTYPE */
 %union {
     int intval;
     char *strval;
@@ -19,7 +18,6 @@ statement *root;
     compound_statement *compound;
 }
 
-/* TOKENS */
 %token <intval> TK_integer
 %token <strval> TK_variable
 %token <strval> TK_string
@@ -27,11 +25,13 @@ statement *root;
 %token TK_buildnode TK_name TK_weight TK_isachildof
 %token TK_print TK_for TK_in
 
-/* TYPES */
 %type <int_expr> expr
 %type <bool_expr> bool_expr
 %type <stmt> statement
 %type <compound> stmt_list
+
+%left '+' '-'
+%left '*' '/' '%'
 
 %%
 
@@ -48,38 +48,34 @@ statement:
     TK_variable '=' expr ';'
         { $$ = new assignment_statement($1, $3); }
 
-    | TK_print expr ';'
+  | TK_print expr ';'
         { $$ = new print_statement($2); }
 
-    | '{' stmt_list '}'
+  | '{' stmt_list '}'
         { $$ = $2; }
 
-    | TK_for TK_variable TK_in expr '{' stmt_list '}'
+  | TK_for TK_variable TK_in expr '{' stmt_list '}'
         {
-            /* Placeholder: treat as while loop for now */
             $$ = new while_statement(
                 new greater_expr($4, new int_constant(0)),
                 $6
             );
         }
 
-    | TK_buildnode TK_variable TK_weight expr ';'
-        { $$ = new buildnode_statement($2, $4->evaluate_expression(*(new map<string,int>()))); }
+  | TK_buildnode TK_variable TK_weight TK_integer ';'
+        { $$ = new buildnode_statement($2, $4); }
 
-    | TK_variable TK_isachildof TK_variable ';'
+  | TK_variable TK_isachildof TK_variable ';'
         { $$ = new childof_statement($1, $3); }
 ;
 
-/* EXPRESSIONS */
 expr:
     expr '+' expr { $$ = new plus_expr($1, $3); }
   | expr '-' expr { $$ = new minus_expr($1, $3); }
   | expr '*' expr { $$ = new mult_expr($1, $3); }
   | expr '/' expr { $$ = new div_expr($1, $3); }
   | expr '%' expr { $$ = new mod_expr($1, $3); }
-
   | '(' expr ')'  { $$ = $2; }
-
   | TK_integer    { $$ = new int_constant($1); }
   | TK_variable   { $$ = new variable($1); }
 ;
