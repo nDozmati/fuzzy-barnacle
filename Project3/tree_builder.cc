@@ -9,8 +9,16 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 using namespace std;
+
+class tree{
+    string name;
+    int weight;
+    vector <tree*> children;
+
+};
 
 // Flex interface (C linkage)
 extern "C" {
