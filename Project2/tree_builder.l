@@ -10,13 +10,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern FILE *out;       /* global output file pointer */
-int prev_token = -1;    /* track previous token */
+// extern FILE *out;       /* global output file pointer */
+// int prev_token = -1;    /* track previous token */
 
 /* HELPER MACROS */
 
 /* Print a matched TK_id to outfile */
-#define EMIT(token) do { fprintf(out, "%d ", token); prev_token = token; } while(0)
+// #define EMIT(token) do { fprintf(out, "%d ", token); prev_token = token; } while(0)
 
 
 /* DEFINED TOKENS */
