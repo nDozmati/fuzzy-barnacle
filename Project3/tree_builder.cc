@@ -1,7 +1,7 @@
 /**
- * @file sprout.cc
+ * @file tree_builder.cc
  * @author Matthew Carpenter and Nicolas Dozmati
- * @brief Driver for Sprout lexical analyzer
+ * @brief Driver for TreeBuilder lexical analyzer
  * @date 2026-03-30
  * 
  */
