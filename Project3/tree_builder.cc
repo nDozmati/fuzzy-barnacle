@@ -16,11 +16,12 @@
 using namespace std;
 
 // Global tree structures
-unordered_map<string, Node*> node_map;
-Node* tree_root = nullptr;
-ofstream debug_out;
+unordered_map<string, Node*> node_map;  // Maps node names to Node pointers for quick lookup
+Node* tree_root = nullptr;              // Pointer to the root node of the built tree
+ofstream debug_out;                     // Output stream for detailed build debug information
 
-// Function to print the tree in the required format
+// Function to print the tree in the specified format: root_name [child1 [...], child2 [...], ...]
+// Recursively traverses the tree and outputs in bracket notation
 void print_tree(Node* node, ostream& out) {
     out << node->name;
     if (!node->children.empty()) {
@@ -42,10 +43,17 @@ extern "C" {
 
 extern compound_statement *root;
 
-// Shared output file (used by sprout.l)
+// Shared output file (for debugging)
 FILE* out;
 
 int main(int argc, char* argv[]) {
+    // Main driver for TreeBuilder compiler
+    // 1. Parse command line arguments and open input file
+    // 2. Parse the input using Bison-generated parser
+    // 3. Evaluate the parse tree to build the actual tree structure in memory
+    // 4. The print() statement in the code outputs the tree to stdout
+    // 5. Debug information is saved to debug.txt
+
     // Check for input file
     if (argc < 2) {
         cerr << "Usage: ./TreeBuilder <inputfile>\n";

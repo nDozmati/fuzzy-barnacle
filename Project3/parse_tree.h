@@ -31,11 +31,11 @@
 
 using namespace std;
 
-// [TB] Tree node structure
+// [TB] Tree node structure for representing the built tree
 struct Node {
-    string name;
-    int weight;
-    vector<Node*> children;
+    string name;            // Node name (such as "root", "A1")
+    int weight;             // Node weight integer
+    vector<Node*> children; // List of child nodes
 };
 
 // [TB] Global tree structures (declared in tree_builder.cc)
@@ -398,7 +398,7 @@ class print_statement: public statement {
     e=expr;
   }
   virtual void evaluate_statement(map<string, int> &sym_tab) {
-    // Print the tree instead of the string, as per project requirements
+    // [TB] Print the tree structure instead of the string expression "tree"
     extern Node* tree_root;
     extern void print_tree(Node*, ostream&);
     if (tree_root) {
@@ -414,7 +414,7 @@ class print_statement: public statement {
 };
 
 /*
-TreeBuilder language specifics:
+[TB] TreeBuilder language specifics:
 */
 
 class buildnode_statement : public statement {

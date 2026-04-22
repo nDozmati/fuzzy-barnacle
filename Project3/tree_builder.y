@@ -56,27 +56,34 @@ stmt_list:
 ;
 
 statement:
+    // Variable assignment: var = expr;
     TK_variable '=' expr ';'
         { $$ = new assignment_statement($1, $3); }
 
-  | TK_print str_expr ';'
+  | // Print the tree: print(expr);
+    TK_print str_expr ';'
         { $$ = new print_statement($2); }
 
-  | '{' stmt_list '}'
+  | // Compound statement: { stmt_list }
+    '{' stmt_list '}'
         { $$ = $2; }
 
-  | TK_for TK_variable TK_in range '{' stmt_list '}' ';'
+  | // For loop: for var in [low:high] { body }
+    TK_for TK_variable TK_in range '{' stmt_list '}' ';'
         {
             $$ = new for_statement($2, $4.lower, $4.upper, $6);
         }
 
-  | TK_buildnode '{' TK_name '=' str_expr ';' TK_weight '=' expr ';' '}' ';'
+  | // Build root node: buildnode { name=expr; weight=expr; };
+    TK_buildnode '{' TK_name '=' str_expr ';' TK_weight '=' expr ';' '}' ';'
         { $$ = new buildnode_statement($5, $9, NULL); }
 
-  | TK_buildnode '{' TK_name '=' str_expr ';' TK_weight '=' expr ';' TK_isachildof '=' str_expr ';' '}' ';'
+  | // Build node with parent: buildnode { name=expr; weight=expr; isachildof=expr; };
+    TK_buildnode '{' TK_name '=' str_expr ';' TK_weight '=' expr ';' TK_isachildof '=' str_expr ';' '}' ';'
         { $$ = new buildnode_statement($5, $9, $13); }
 
-  | TK_variable TK_isachildof TK_variable ';'
+  | // Add child relationship: var isachildof var;
+    TK_variable TK_isachildof TK_variable ';'
         { $$ = new childof_statement($1, $3); }
 ;
 

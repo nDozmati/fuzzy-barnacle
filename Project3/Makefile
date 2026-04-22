@@ -5,7 +5,7 @@
 
 CXX = g++
 CC  = gcc
-CXXFLAGS = -Wall -std=c++17 -Wno-unused-function
+CXXFLAGS = -Wall -std=c++17 -Wno-unused-function  # Suppress unused function warnings from Flex-generated code
 CFLAGS = -Wall
 
 LEX = flex
