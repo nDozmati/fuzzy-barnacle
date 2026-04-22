@@ -1,7 +1,7 @@
 /**
  * @file tree_builder.l
  * @brief lexical analyzer for TreeBuilder language
- * @date 2026-04-15
+ * @date 2026-04-22
  * @author Nicolas Dozmati & Matthew Carpenter
  */
 
@@ -17,6 +17,8 @@
 
 /* yylval is defined by yacc */
 extern YYSTYPE yylval;
+
+extern "C" int yylex();
 %}
 
 /* FLEX OPTIONS */
@@ -35,7 +37,9 @@ WHITESPACE  [ \t\n]+
 {WHITESPACE}    ;   /* ignore whitespace, tabs, and new line characters */
 
 {STRING} {
-    yylval.strval = strdup(yytext);
+    char *s = strdup(yytext + 1);
+    s[strlen(s) - 1] = '\0';
+    yylval.strval = s;
     return TK_string;
 }
 

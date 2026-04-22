@@ -12,14 +12,36 @@
 //
 //******************************************************************
 
+/**
+ * @file parse_tree.h
+ * @brief definitions for parse tree nodes and expression evaluation classes for TreeBuilder language
+ * @date 2026-04-22
+ * @author Nicolas Dozmati & Matthew Carpenter
+ * @note Code labeled with [TB] was added specifically to implement TreeBuilder language extensions
+ */
+
 #include <map>
 #include <string>
 #include <set>
 #include <algorithm>
 #include <iostream>
-
+#include <unordered_map>
+#include <vector>
+#include <fstream>
 
 using namespace std;
+
+// [TB] Tree node structure for representing the built tree
+struct Node {
+    string name;            // Node name (such as "root", "A1")
+    int weight;             // Node weight integer
+    vector<Node*> children; // List of child nodes
+};
+
+// [TB] Global tree structures (declared in tree_builder.cc)
+extern unordered_map<string, Node*> node_map;
+extern Node* tree_root;
+extern ofstream debug_out;
 
 class integer_expression {
  public:
@@ -30,6 +52,54 @@ class integer_expression {
 class boolean_expression {
  public:
      virtual bool evaluate_expression(map<string, int> &sym_tab)=0;
+};
+
+
+class string_expression {
+ public:
+  virtual string evaluate_string(map<string, int> &sym_tab) =0;
+};
+
+
+class string_constant: public string_expression {
+ public:
+  string_constant(char *val) { saved_val = val; }
+
+  virtual string evaluate_string(map<string, int> &sym_tab) {
+    return saved_val;
+  }
+ private:
+  string saved_val;
+};
+
+class string_concat: public string_expression {
+ public:
+  string_concat(string_expression *left, string_expression *right) {
+    l = left;
+    r = right;
+  }
+
+  virtual string evaluate_string(map<string, int> &sym_tab) {
+    return l->evaluate_string(sym_tab) + r->evaluate_string(sym_tab);
+  }
+ private:
+  string_expression *l;
+  string_expression *r;
+};
+
+class string_concat_int: public string_expression {
+ public:
+  string_concat_int(string_expression *left, integer_expression *right) {
+    l = left;
+    r = right;
+  }
+
+  virtual string evaluate_string(map<string, int> &sym_tab) {
+    return l->evaluate_string(sym_tab) + to_string(r->evaluate_expression(sym_tab));
+  }
+ private:
+  string_expression *l;
+  integer_expression *r;
 };
 
 
@@ -276,6 +346,30 @@ class while_statement: public statement {
     compound_statement *b;
   };
 
+class for_statement: public statement {
+ public:
+  for_statement(char *var, integer_expression *low, integer_expression *high, compound_statement *body) {
+    v = var;
+    l = low;
+    h = high;
+    b = body;
+  }
+
+  virtual void evaluate_statement(map<string, int> &sym_tab) {
+    int low_val = l->evaluate_expression(sym_tab);
+    int high_val = h->evaluate_expression(sym_tab);
+    for (int i = low_val; i <= high_val; i++) {
+      sym_tab[v] = i;
+      b->evaluate_statement(sym_tab);
+    }
+  }
+ private:
+  string v;
+  integer_expression *l;
+  integer_expression *h;
+  compound_statement *b;
+};
+
 class assignment_statement: public statement {
 
  public:
@@ -300,37 +394,66 @@ class assignment_statement: public statement {
 
 class print_statement: public statement {
  public:
-  print_statement(integer_expression *expr) {
+  print_statement(string_expression *expr) {
     e=expr;
   }
   virtual void evaluate_statement(map<string, int> &sym_tab) {
-    cout << e->evaluate_expression(sym_tab) << endl;
+    // [TB] Print the tree structure instead of the string expression "tree"
+    extern Node* tree_root;
+    extern void print_tree(Node*, ostream&);
+    if (tree_root) {
+      print_tree(tree_root, cout);
+      cout << endl;
+    }
   }
     
 
   private:
-    integer_expression *e;
+    string_expression *e;
 
 };
 
 /*
-TreeBuilder language specifics:
+[TB] TreeBuilder language specifics:
 */
 
 class buildnode_statement : public statement {
 public:
-    string name;
-    int weight;
-
-    buildnode_statement(char *n, int w) {
-        name = n;
-        weight = w;
+    buildnode_statement(string_expression *n, integer_expression *w, string_expression *p) {
+        name_expr = n;
+        weight_expr = w;
+        parent_expr = p;
     }
 
     virtual void evaluate_statement(map<string, int> &sym_tab) {
-        cout << "Building node: " << name 
-             << " weight=" << weight << endl;
+        string n = name_expr->evaluate_string(sym_tab);
+        int w = weight_expr->evaluate_expression(sym_tab);
+        string p = parent_expr ? parent_expr->evaluate_string(sym_tab) : "";
+
+        // [TB] Output to debug file (very handy!)
+        extern ofstream debug_out;
+        debug_out << "Building node: " << n << " weight=" << w;
+        if (!p.empty()) debug_out << " parent=" << p;
+        debug_out << endl;
+
+        // [TB] Build the tree
+        extern unordered_map<string, Node*> node_map;
+        extern Node* tree_root;
+        Node* node = new Node{n, w, {}};
+        node_map[n] = node;
+        if (p.empty()) {
+            tree_root = node;
+        } else {
+            auto it = node_map.find(p);
+            if (it != node_map.end()) {
+                it->second->children.push_back(node);
+            }
+        }
     }
+private:
+    string_expression *name_expr;
+    integer_expression *weight_expr;
+    string_expression *parent_expr;
 };
 
 class childof_statement : public statement {
