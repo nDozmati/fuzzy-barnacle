@@ -17,6 +17,8 @@
 
 /* yylval is defined by yacc */
 extern YYSTYPE yylval;
+
+extern "C" int yylex();
 %}
 
 /* FLEX OPTIONS */
