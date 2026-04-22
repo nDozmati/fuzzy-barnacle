@@ -1,3 +1,10 @@
+/**
+ * @file tree_builder.y
+ * @brief syntax analyzer for TreeBuilder language
+ * @date 2026-04-22
+ * @author Nicolas Dozmati & Matthew Carpenter
+ */
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,7 +65,7 @@ statement:
   | '{' stmt_list '}'
         { $$ = $2; }
 
-| TK_for TK_variable TK_in range '{' stmt_list '}' ';'
+  | TK_for TK_variable TK_in range '{' stmt_list '}' ';'
         {
             $$ = new for_statement($2, $4.lower, $4.upper, $6);
         }

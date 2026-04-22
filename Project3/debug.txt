@@ -1,0 +1,26 @@
+Building node: root weight=10
+Building node: A1 weight=5 parent=root
+Building node: A2 weight=6 parent=root
+Building node: A3 weight=7 parent=root
+Building node: A4 weight=8 parent=root
+Building node: A5 weight=9 parent=root
+Building node: A6 weight=10 parent=root
+Building node: A7 weight=11 parent=root
+Building node: A8 weight=12 parent=root
+Building node: A9 weight=13 parent=root
+Building node: A10 weight=14 parent=root
+Building node: B1 weight=3 parent=A1
+Building node: B2 weight=3 parent=A2
+Building node: B3 weight=3 parent=A3
+Building node: B4 weight=3 parent=A4
+Building node: B5 weight=3 parent=A5
+Building node: C1 weight=3 parent=B1
+Building node: D1 weight=1 parent=B1
+Building node: C2 weight=3 parent=B2
+Building node: D2 weight=1 parent=B2
+Building node: C3 weight=3 parent=B3
+Building node: D3 weight=1 parent=B3
+Building node: C4 weight=3 parent=B4
+Building node: D4 weight=1 parent=B4
+Building node: C5 weight=3 parent=B5
+Building node: D5 weight=1 parent=B5

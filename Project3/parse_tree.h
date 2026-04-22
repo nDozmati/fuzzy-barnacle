@@ -12,14 +12,36 @@
 //
 //******************************************************************
 
+/**
+ * @file parse_tree.h
+ * @brief definitions for parse tree nodes and expression evaluation classes for TreeBuilder language
+ * @date 2026-04-22
+ * @author Nicolas Dozmati & Matthew Carpenter
+ * @note Code labeled with [TB] was added specifically to implement TreeBuilder language extensions
+ */
+
 #include <map>
 #include <string>
 #include <set>
 #include <algorithm>
 #include <iostream>
-
+#include <unordered_map>
+#include <vector>
+#include <fstream>
 
 using namespace std;
+
+// [TB] Tree node structure
+struct Node {
+    string name;
+    int weight;
+    vector<Node*> children;
+};
+
+// [TB] Global tree structures (declared in tree_builder.cc)
+extern unordered_map<string, Node*> node_map;
+extern Node* tree_root;
+extern ofstream debug_out;
 
 class integer_expression {
  public:
@@ -401,9 +423,26 @@ public:
         string n = name_expr->evaluate_string(sym_tab);
         int w = weight_expr->evaluate_expression(sym_tab);
         string p = parent_expr ? parent_expr->evaluate_string(sym_tab) : "";
-        cout << "Building node: " << n << " weight=" << w;
-        if (!p.empty()) cout << " parent=" << p;
-        cout << endl;
+
+        // [TB] Output to debug file (very handy!)
+        extern ofstream debug_out;
+        debug_out << "Building node: " << n << " weight=" << w;
+        if (!p.empty()) debug_out << " parent=" << p;
+        debug_out << endl;
+
+        // [TB] Build the tree
+        extern unordered_map<string, Node*> node_map;
+        extern Node* tree_root;
+        Node* node = new Node{n, w, {}};
+        node_map[n] = node;
+        if (p.empty()) {
+            tree_root = node;
+        } else {
+            auto it = node_map.find(p);
+            if (it != node_map.end()) {
+                it->second->children.push_back(node);
+            }
+        }
     }
 private:
     string_expression *name_expr;

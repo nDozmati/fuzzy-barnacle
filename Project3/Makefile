@@ -5,7 +5,7 @@
 
 CXX = g++
 CC  = gcc
-CXXFLAGS = -Wall -std=c++17
+CXXFLAGS = -Wall -std=c++17 -Wno-unused-function
 CFLAGS = -Wall
 
 LEX = flex
