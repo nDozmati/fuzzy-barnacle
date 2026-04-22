@@ -75,12 +75,6 @@ int main(int argc, char* argv[]) {
         // Evaluate the parse tree to build the actual tree structure
         map<string,int> sym_tab;
         root->evaluate_statement(sym_tab);
-
-        // Print the tree in the required format
-        if (tree_root) {
-            print_tree(tree_root, cout);
-            cout << endl;
-        }
     } else {
         cout << "Parsing failed...\n";
     }

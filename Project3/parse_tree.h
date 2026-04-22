@@ -398,7 +398,13 @@ class print_statement: public statement {
     e=expr;
   }
   virtual void evaluate_statement(map<string, int> &sym_tab) {
-    cout << e->evaluate_string(sym_tab) << endl;
+    // Print the tree instead of the string, as per project requirements
+    extern Node* tree_root;
+    extern void print_tree(Node*, ostream&);
+    if (tree_root) {
+      print_tree(tree_root, cout);
+      cout << endl;
+    }
   }
     
 
